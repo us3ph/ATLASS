@@ -56,6 +56,7 @@ export const profileRepository = {
         portfolio_url: profileData.portfolioUrl,
         location: profileData.location,
         available_for_remote: profileData.availableForRemote,
+        cv_url: profileData.cvUrl,
       },
       include: {
         user: {

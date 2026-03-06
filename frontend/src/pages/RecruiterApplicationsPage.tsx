@@ -13,6 +13,7 @@ import {
   MapPin,
   Mail,
   Briefcase,
+  FileDown,
 } from "lucide-react";
 import type { ApplicationResponse, ApplicationStatus } from "../types";
 
@@ -228,6 +229,21 @@ const RecruiterApplicationsPage = () => {
                               <div className="bg-gray-50 rounded-lg p-3 mt-2">
                                 <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Cover Letter</p>
                                 <p className="text-sm text-gray-600">{application.coverLetter}</p>
+                              </div>
+                            )}
+
+                            {/* CV Download */}
+                            {(application.cvUrl || application.developer.cvUrl) && (
+                              <div className="mt-2">
+                                <a
+                                  href={`${import.meta.env.VITE_API_URL?.replace('/api', '')}${application.cvUrl || application.developer.cvUrl}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary-50 text-primary-700 rounded-lg text-xs font-medium hover:bg-primary-100 transition-colors"
+                                >
+                                  <FileDown className="w-3.5 h-3.5" />
+                                  {application.cvUrl ? "Download Application CV" : "Download Profile CV"}
+                                </a>
                               </div>
                             )}
 

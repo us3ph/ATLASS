@@ -11,6 +11,7 @@ import {
   XCircle,
   Sparkles,
   Building2,
+  FileDown,
 } from "lucide-react";
 import type { ApplicationResponse, ApplicationStatus } from "../types";
 
@@ -149,6 +150,21 @@ const MyApplicationsPage = () => {
                   <div className="mt-3 pt-3 border-t border-gray-100">
                     <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">AI Analysis</p>
                     <p className="text-sm text-gray-600">{application.matchReason}</p>
+                  </div>
+                )}
+
+                {/* CV Info */}
+                {application.cvUrl && (
+                  <div className="mt-3 pt-3 border-t border-gray-100">
+                    <a
+                      href={`${import.meta.env.VITE_API_URL?.replace('/api', '')}${application.cvUrl}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 text-primary-600 hover:text-primary-700 text-sm font-medium"
+                    >
+                      <FileDown className="w-4 h-4" />
+                      View submitted CV
+                    </a>
                   </div>
                 )}
 

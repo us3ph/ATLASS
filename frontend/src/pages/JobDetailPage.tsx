@@ -4,6 +4,7 @@ import { jobsApi, applicationsApi } from "../services/api";
 import { useAuth } from "../context/AuthContext";
 import LoadingSpinner from "../components/LoadingSpinner";
 import MatchCard from "../components/MatchCard";
+import CvUpload from "../components/CvUpload";
 import {
   MapPin,
   Globe2,
@@ -31,6 +32,7 @@ const JobDetailPage = () => {
   const [isApplying, setIsApplying] = useState(false);
   const [applicationResult, setApplicationResult] = useState<ApplicationResponse | null>(null);
   const [coverLetter, setCoverLetter] = useState("");
+  const [cvFile, setCvFile] = useState<File | null>(null);
   const [showApplyForm, setShowApplyForm] = useState(false);
 
   useEffect(() => {
@@ -73,7 +75,11 @@ const JobDetailPage = () => {
     setErrorMessage("");
 
     try {
-      const result = await applicationsApi.applyToJob(jobId, coverLetter || undefined);
+      const result = await applicationsApi.applyToJob(
+        jobId,
+        coverLetter || undefined,
+        cvFile || undefined
+      );
       setApplicationResult(result);
       setShowApplyForm(false);
     } catch (error: unknown) {
@@ -242,6 +248,14 @@ const JobDetailPage = () => {
                       className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 resize-none"
                     />
                   </div>
+
+                  {/* CV Upload */}
+                  <CvUpload
+                    onFileSelect={(file) => setCvFile(file)}
+                    label="Attach Your CV"
+                    compact
+                  />
+
                   <div className="flex items-center gap-3">
                     <button
                       onClick={handleApply}

@@ -1,20 +1,33 @@
 import { Router, Request, Response, NextFunction } from "express";
-import { authenticateToken, requireRole } from "../middleware";
+import { authenticateToken, requireRole, cvUpload } from "../middleware";
 import { applicationService } from "../services";
 import { applyToJobSchema, updateApplicationStatusSchema } from "../validators";
 
 const router = Router();
 
 // POST /api/applications/apply  — Developer applies to a job (AI match runs automatically)
+// Supports multipart/form-data with optional CV file
 router.post(
   "/apply",
   authenticateToken,
   requireRole("developer"),
+  cvUpload.single("cv"),
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = req.user!.userId;
       const { jobId, coverLetter } = applyToJobSchema.parse(req.body);
-      const application = await applicationService.applyToJob(userId, jobId, coverLetter);
+
+      // Build CV URL if file was uploaded
+      const cvUrl = req.file
+        ? `/uploads/cvs/${req.file.filename}`
+        : undefined;
+
+      const application = await applicationService.applyToJob(
+        userId,
+        jobId,
+        coverLetter,
+        cvUrl
+      );
 
       res.status(201).json({
         success: true,

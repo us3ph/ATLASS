@@ -13,7 +13,7 @@ const openai = new OpenAI({
   },
 });
 
-const buildMatchPrompt = (
+export const buildMatchPrompt = (
   developerProfile: {
     skills: string[];
     experience_years: number;
@@ -41,7 +41,7 @@ Return ONLY a valid JSON object with no additional text:
 { "score": <number 0-100>, "reason": "<brief explanation of the match>" }`;
 };
 
-const parseMatchResponse = (content: string): MatchResult => {
+export const parseMatchResponse = (content: string): MatchResult => {
   try {
     console.log("[AI Raw Response]", content);
 

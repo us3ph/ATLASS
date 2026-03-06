@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import OAuthButtons from "../components/OAuthButtons";
 import { Zap, Eye, EyeOff } from "lucide-react";
 
 const LoginPage = () => {
@@ -51,6 +52,9 @@ const LoginPage = () => {
               {errorMessage}
             </div>
           )}
+
+          {/* OAuth Buttons */}
+          <OAuthButtons />
 
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">

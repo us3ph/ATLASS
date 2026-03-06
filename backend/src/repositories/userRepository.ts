@@ -33,6 +33,45 @@ export const userRepository = {
     });
   },
 
+  // ─── OAuth Methods ───
+  async findByOAuth(provider: string, oauthId: string) {
+    return prisma.users.findFirst({
+      where: {
+        oauth_provider: provider,
+        oauth_id: oauthId,
+      },
+    });
+  },
+
+  async createOAuth(
+    email: string,
+    fullName: string,
+    role: UserRole,
+    oauthProvider: string,
+    oauthId: string
+  ) {
+    return prisma.users.create({
+      data: {
+        email,
+        full_name: fullName,
+        role,
+        oauth_provider: oauthProvider,
+        oauth_id: oauthId,
+        password: null,
+      },
+    });
+  },
+
+  async linkOAuth(userId: string, provider: string, oauthId: string) {
+    return prisma.users.update({
+      where: { id: userId },
+      data: {
+        oauth_provider: provider,
+        oauth_id: oauthId,
+      },
+    });
+  },
+
   async countAll() {
     return prisma.users.count({
       where: { role: "developer" },

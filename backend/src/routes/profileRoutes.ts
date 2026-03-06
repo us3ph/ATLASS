@@ -1,5 +1,5 @@
 import { Router, Request, Response, NextFunction } from "express";
-import { authenticateToken, requireRole } from "../middleware";
+import { authenticateToken, requireRole, cvUpload } from "../middleware";
 import { profileService } from "../services";
 import { updateProfileSchema } from "../validators";
 
@@ -24,15 +24,35 @@ router.get(
   }
 );
 
-// PUT /api/profile/update
+// PUT /api/profile/update  (supports multipart/form-data with CV file)
 router.put(
   "/update",
   authenticateToken,
   requireRole("developer"),
+  cvUpload.single("cv"),
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = req.user!.userId;
-      const validatedData = updateProfileSchema.parse(req.body);
+
+      // Parse JSON fields from multipart body
+      const bodyData = { ...req.body };
+      if (typeof bodyData.skills === "string") {
+        bodyData.skills = JSON.parse(bodyData.skills);
+      }
+      if (typeof bodyData.experienceYears === "string") {
+        bodyData.experienceYears = parseInt(bodyData.experienceYears, 10);
+      }
+      if (typeof bodyData.availableForRemote === "string") {
+        bodyData.availableForRemote = bodyData.availableForRemote === "true";
+      }
+
+      const validatedData = updateProfileSchema.parse(bodyData);
+
+      // Attach CV URL if file was uploaded
+      if (req.file) {
+        validatedData.cvUrl = `/uploads/cvs/${req.file.filename}`;
+      }
+
       const updatedProfile = await profileService.updateProfile(userId, validatedData);
 
       res.status(200).json({

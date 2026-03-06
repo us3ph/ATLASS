@@ -13,6 +13,7 @@ const formatProfile = (profile: {
   portfolio_url: string | null;
   location: string;
   available_for_remote: boolean;
+  cv_url: string | null;
   created_at: Date;
   updated_at: Date;
 }): DeveloperProfile => ({
@@ -26,6 +27,7 @@ const formatProfile = (profile: {
   portfolioUrl: profile.portfolio_url ?? undefined,
   location: profile.location,
   availableForRemote: profile.available_for_remote,
+  cvUrl: profile.cv_url ?? undefined,
   createdAt: profile.created_at,
   updatedAt: profile.updated_at,
 });

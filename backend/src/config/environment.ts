@@ -13,6 +13,11 @@ interface EnvironmentConfig {
   aiBaseUrl: string;
   aiModel: string;
   corsOrigin: string;
+  backendUrl: string;
+  githubClientId: string;
+  githubClientSecret: string;
+  googleClientId: string;
+  googleClientSecret: string;
 }
 
 /**
@@ -50,6 +55,17 @@ const getEnvVariable = (key: string, fallback?: string): string => {
   return value;
 };
 
+/**
+ * Read an optional secret — returns empty string if not found.
+ */
+const readOptionalSecret = (secretName: string, envKey: string): string => {
+  try {
+    return readSecret(secretName, envKey, "");
+  } catch {
+    return "";
+  }
+};
+
 export const config: EnvironmentConfig = {
   port: parseInt(getEnvVariable("BACKEND_PORT", "4000"), 10),
   nodeEnv: getEnvVariable("NODE_ENV", "development"),
@@ -59,4 +75,9 @@ export const config: EnvironmentConfig = {
   aiBaseUrl: getEnvVariable("AI_BASE_URL", "https://openrouter.ai/api/v1"),
   aiModel: getEnvVariable("AI_MODEL", "nvidia/nemotron-nano-9b-v2:free"),
   corsOrigin: getEnvVariable("CORS_ORIGIN", "http://localhost:5173"),
+  backendUrl: getEnvVariable("BACKEND_URL", "http://localhost:4000"),
+  githubClientId: readOptionalSecret("github_client_id", "GITHUB_CLIENT_ID"),
+  githubClientSecret: readOptionalSecret("github_client_secret", "GITHUB_CLIENT_SECRET"),
+  googleClientId: readOptionalSecret("google_client_id", "GOOGLE_CLIENT_ID"),
+  googleClientSecret: readOptionalSecret("google_client_secret", "GOOGLE_CLIENT_SECRET"),
 };

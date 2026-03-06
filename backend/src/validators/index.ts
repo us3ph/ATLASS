@@ -6,7 +6,11 @@ export const registerSchema = z.object({
   password: z
     .string()
     .min(8, "Password must be at least 8 characters")
-    .max(128, "Password must be at most 128 characters"),
+    .max(128, "Password must be at most 128 characters")
+    .regex(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
+      "Password must contain at least one uppercase letter, one lowercase letter, and one digit"
+    ),
   fullName: z
     .string()
     .min(2, "Full name must be at least 2 characters")
@@ -29,6 +33,7 @@ export const updateProfileSchema = z.object({
   portfolioUrl: z.string().url().optional().or(z.literal("")),
   location: z.string().max(100).optional(),
   availableForRemote: z.boolean().optional(),
+  cvUrl: z.string().max(500).optional(),
 });
 
 // ─── Job Validators ───

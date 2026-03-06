@@ -12,17 +12,20 @@ datasource db {
 
 // ─── Users ───
 model users {
-  id         String   @id @default(uuid()) @db.Uuid
-  email      String   @unique @db.VarChar(255)
-  password   String   @db.VarChar(255)
-  full_name  String   @db.VarChar(100)
-  role       UserRole @default(developer)
-  created_at DateTime @default(now()) @db.Timestamptz
-  updated_at DateTime @updatedAt @db.Timestamptz
+  id             String   @id @default(uuid()) @db.Uuid
+  email          String   @unique @db.VarChar(255)
+  password       String?  @db.VarChar(255)
+  full_name      String   @db.VarChar(100)
+  role           UserRole @default(developer)
+  oauth_provider String?  @db.VarChar(50)
+  oauth_id       String?  @db.VarChar(255)
+  created_at     DateTime @default(now()) @db.Timestamptz
+  updated_at     DateTime @updatedAt @db.Timestamptz
 
   developer_profile developer_profiles?
   jobs              jobs[]
 
+  @@unique([oauth_provider, oauth_id])
   @@index([email])
 }
 
@@ -44,6 +47,7 @@ model developer_profiles {
   portfolio_url      String?  @db.VarChar(255)
   location           String   @default("") @db.VarChar(100)
   available_for_remote Boolean @default(true)
+  cv_url             String?  @db.VarChar(500)
   created_at         DateTime @default(now()) @db.Timestamptz
   updated_at         DateTime @updatedAt @db.Timestamptz
 
@@ -119,6 +123,7 @@ model job_applications {
   developer_id   String            @db.Uuid
   job_id         String            @db.Uuid
   cover_letter   String            @default("") @db.Text
+  cv_url         String?           @db.VarChar(500)
   status         ApplicationStatus @default(pending)
   match_score    Int?
   match_reason   String?           @db.Text

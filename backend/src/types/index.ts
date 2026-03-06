@@ -62,6 +62,7 @@ export interface DeveloperProfile {
   portfolioUrl?: string;
   location: string;
   availableForRemote: boolean;
+  cvUrl?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -75,6 +76,7 @@ export interface UpdateDeveloperProfilePayload {
   portfolioUrl?: string;
   location?: string;
   availableForRemote?: boolean;
+  cvUrl?: string;
 }
 
 // ─── Job Types ───
@@ -138,6 +140,7 @@ export interface ApplicationResponse {
   developerId: string;
   jobId: string;
   coverLetter: string;
+  cvUrl: string | null;
   status: ApplicationStatus;
   matchScore: number | null;
   matchReason: string | null;
@@ -155,6 +158,7 @@ export interface ApplicationResponse {
     skills: string[];
     experienceYears: number;
     location: string;
+    cvUrl: string | null;
     user: { id: string; fullName: string; email: string };
   };
 }

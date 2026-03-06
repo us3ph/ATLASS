@@ -64,6 +64,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     localStorage.removeItem(STORAGE_USER_KEY);
   }, []);
 
+  const loginWithToken = useCallback((newToken: string, newUser: UserPublic) => {
+    setToken(newToken);
+    setUser(newUser);
+    localStorage.setItem(STORAGE_TOKEN_KEY, newToken);
+    localStorage.setItem(STORAGE_USER_KEY, JSON.stringify(newUser));
+  }, []);
+
   const contextValue: AuthContextType = {
     user,
     token,
@@ -71,6 +78,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     isLoading,
     login,
     register,
+    loginWithToken,
     logout,
   };
 

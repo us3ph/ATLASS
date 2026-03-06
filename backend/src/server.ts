@@ -2,8 +2,10 @@ import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
+import path from "path";
 import { config } from "./config";
-import { errorHandler } from "./middleware";
+import { errorHandler, authenticateToken, UPLOADS_BASE_PATH } from "./middleware";
+import { configurePassport, passport } from "./services";
 import apiRoutes from "./routes";
 
 const app = express();
@@ -20,18 +22,44 @@ app.use(
 );
 
 // ─── Rate Limiting ───
-const limiter = rateLimit({
+const globalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100, // limit each IP to 100 requests per windowMs
   standardHeaders: true,
   legacyHeaders: false,
   message: { success: false, message: "Too many requests, please try again later" },
 });
-app.use(limiter);
+app.use(globalLimiter);
+
+// Auth-specific stricter rate limiter (10 attempts per 15 min)
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { success: false, message: "Too many authentication attempts, please try again later" },
+});
+app.use("/api/auth/login", authLimiter);
+app.use("/api/auth/register", authLimiter);
 
 // ─── Body Parsing ───
-app.use(express.json({ limit: "10mb" }));
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: "256kb" }));
+app.use(express.urlencoded({ extended: true, limit: "256kb" }));
+
+// ─── Passport (OAuth) ───
+app.use(passport.initialize());
+configurePassport();
+
+// ─── Authenticated File Serving (CV uploads) ───
+app.get("/uploads/cvs/:filename", authenticateToken, (req, res) => {
+  const filename = path.basename(req.params.filename); // prevent path traversal
+  const filePath = path.join(UPLOADS_BASE_PATH, "cvs", filename);
+  res.sendFile(filePath, (err) => {
+    if (err) {
+      res.status(404).json({ success: false, message: "File not found" });
+    }
+  });
+});
 
 // ─── Health Check ───
 app.get("/api/health", (_req, res) => {

@@ -15,7 +15,7 @@ const SALT_ROUNDS = 12;
 const TOKEN_EXPIRY = "7d";
 
 const generateToken = (payload: AuthTokenPayload): string => {
-  return jwt.sign(payload, config.jwtSecret, { expiresIn: TOKEN_EXPIRY });
+  return jwt.sign(payload, config.jwtSecret, { expiresIn: TOKEN_EXPIRY, algorithm: "HS256" });
 };
 
 const formatUserPublic = (user: {
@@ -69,6 +69,14 @@ export const authService = {
     const existingUser = await userRepository.findByEmail(payload.email);
     if (!existingUser) {
       throw new AppError("Invalid email or password", 401);
+    }
+
+    // OAuth-only users cannot login with password
+    if (!existingUser.password) {
+      throw new AppError(
+        "This account uses social login (GitHub/Google). Please sign in with your OAuth provider.",
+        400
+      );
     }
 
     const isPasswordValid = await bcrypt.compare(payload.password, existingUser.password);

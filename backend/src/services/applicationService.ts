@@ -8,6 +8,7 @@ const formatApplication = (app: {
   developer_id: string;
   job_id: string;
   cover_letter: string;
+  cv_url: string | null;
   status: string;
   match_score: number | null;
   match_reason: string | null;
@@ -21,6 +22,7 @@ const formatApplication = (app: {
     skills: string[];
     experience_years: number;
     location: string;
+    cv_url: string | null;
     user: { id: string; full_name: string; email: string };
   };
 }): ApplicationResponse => ({
@@ -28,6 +30,7 @@ const formatApplication = (app: {
   developerId: app.developer_id,
   jobId: app.job_id,
   coverLetter: app.cover_letter,
+  cvUrl: app.cv_url,
   status: app.status as ApplicationStatus,
   matchScore: app.match_score,
   matchReason: app.match_reason,
@@ -45,6 +48,7 @@ const formatApplication = (app: {
     skills: app.developer.skills,
     experienceYears: app.developer.experience_years,
     location: app.developer.location,
+    cvUrl: app.developer.cv_url,
     user: {
       id: app.developer.user.id,
       fullName: app.developer.user.full_name,
@@ -60,7 +64,8 @@ export const applicationService = {
   async applyToJob(
     userId: string,
     jobId: string,
-    coverLetter?: string
+    coverLetter?: string,
+    cvUrl?: string
   ): Promise<ApplicationResponse> {
     const developerProfile = await profileRepository.findByUserId(userId);
     if (!developerProfile) {
@@ -103,7 +108,8 @@ export const applicationService = {
       jobId,
       coverLetter ?? "",
       matchScore,
-      matchReason
+      matchReason,
+      cvUrl
     );
 
     return formatApplication(application);

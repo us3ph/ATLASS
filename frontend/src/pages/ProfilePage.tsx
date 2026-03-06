@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { profileApi } from "../services/api";
 import LoadingSpinner from "../components/LoadingSpinner";
+import CvUpload from "../components/CvUpload";
 import {
   User,
   MapPin,
@@ -11,6 +12,7 @@ import {
   Save,
   X,
   Plus,
+  FileDown,
 } from "lucide-react";
 import type { DeveloperProfile, UpdateProfilePayload } from "../types";
 
@@ -25,6 +27,7 @@ const ProfilePage = () => {
 
   const [formData, setFormData] = useState<UpdateProfilePayload>({});
   const [newSkill, setNewSkill] = useState("");
+  const [cvFile, setCvFile] = useState<File | null>(null);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -58,8 +61,9 @@ const ProfilePage = () => {
     setSuccessMessage("");
 
     try {
-      const updatedProfile = await profileApi.updateProfile(formData);
+      const updatedProfile = await profileApi.updateProfile(formData, cvFile || undefined);
       setProfile(updatedProfile);
+      setCvFile(null);
       setIsEditing(false);
       setSuccessMessage("Profile updated successfully!");
       setTimeout(() => setSuccessMessage(""), 3000);
@@ -268,6 +272,33 @@ const ProfilePage = () => {
               Available for remote work
             </span>
           </label>
+        </div>
+
+        {/* CV Upload */}
+        <div className="mb-6">
+          <label className="block text-sm font-semibold text-gray-700 mb-2">Resume / CV</label>
+          {isEditing ? (
+            <CvUpload
+              onFileSelect={setCvFile}
+              existingCvUrl={profile?.cvUrl}
+            />
+          ) : (
+            <div>
+              {profile?.cvUrl ? (
+                <a
+                  href={`${import.meta.env.VITE_API_URL?.replace('/api', '')}${profile.cvUrl}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 text-primary-600 hover:text-primary-700 text-sm font-medium"
+                >
+                  <FileDown className="w-4 h-4" />
+                  View uploaded CV
+                </a>
+              ) : (
+                <p className="text-gray-400 text-sm">No CV uploaded yet. Edit your profile to add one.</p>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Links */}

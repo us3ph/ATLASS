@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import OAuthButtons from "../components/OAuthButtons";
+import CvUpload from "../components/CvUpload";
 import { Zap, Eye, EyeOff } from "lucide-react";
 import type { RegisterPayload } from "../types";
 
@@ -17,6 +19,7 @@ const RegisterPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [cvFile, setCvFile] = useState<File | null>(null);
 
   const handleChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -32,6 +35,18 @@ const RegisterPage = () => {
 
     try {
       await register(formData);
+
+      // If developer uploaded a CV, update profile with it
+      if (cvFile && formData.role === "developer") {
+        try {
+          const { profileApi } = await import("../services/api");
+          await profileApi.updateProfile({}, cvFile);
+        } catch {
+          // CV upload failed but registration succeeded — not critical
+          console.warn("CV upload after registration failed");
+        }
+      }
+
       navigate("/dashboard");
     } catch (error: unknown) {
       const axiosError = error as { response?: { data?: { message?: string } } };
@@ -63,6 +78,9 @@ const RegisterPage = () => {
               {errorMessage}
             </div>
           )}
+
+          {/* OAuth Buttons */}
+          <OAuthButtons />
 
           <div>
             <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-1">
@@ -137,6 +155,15 @@ const RegisterPage = () => {
               <option value="company">Company / Recruiter</option>
             </select>
           </div>
+
+          {/* CV Upload (developers only) */}
+          {formData.role === "developer" && (
+            <CvUpload
+              onFileSelect={(file) => setCvFile(file)}
+              label="Upload Your CV (optional)"
+              compact
+            />
+          )}
 
           <button
             type="submit"

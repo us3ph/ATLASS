@@ -56,6 +56,7 @@ export interface DeveloperProfile {
   portfolioUrl?: string;
   location: string;
   availableForRemote: boolean;
+  cvUrl?: string;
   createdAt: string;
   updatedAt: string;
   user: UserPublic;
@@ -70,6 +71,7 @@ export interface UpdateProfilePayload {
   portfolioUrl?: string;
   location?: string;
   availableForRemote?: boolean;
+  cvUrl?: string;
 }
 
 // ─── Job ───
@@ -121,6 +123,7 @@ export interface ApplicationResponse {
   developerId: string;
   jobId: string;
   coverLetter: string;
+  cvUrl: string | null;
   status: ApplicationStatus;
   matchScore: number | null;
   matchReason: string | null;
@@ -138,6 +141,7 @@ export interface ApplicationResponse {
     skills: string[];
     experienceYears: number;
     location: string;
+    cvUrl: string | null;
     user: { id: string; fullName: string; email: string };
   };
 }
@@ -150,5 +154,6 @@ export interface AuthContextType {
   isLoading: boolean;
   login: (payload: LoginPayload) => Promise<void>;
   register: (payload: RegisterPayload) => Promise<void>;
+  loginWithToken: (token: string, user: UserPublic) => void;
   logout: () => void;
 }

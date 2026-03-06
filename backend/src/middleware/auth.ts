@@ -17,7 +17,7 @@ export const authenticateToken = (
       return;
     }
 
-    const decoded = jwt.verify(token, config.jwtSecret) as AuthTokenPayload;
+    const decoded = jwt.verify(token, config.jwtSecret, { algorithms: ["HS256"] }) as AuthTokenPayload;
     req.user = decoded;
     next();
   } catch (error) {

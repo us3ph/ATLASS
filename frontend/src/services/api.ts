@@ -68,7 +68,27 @@ export const profileApi = {
     return (response.data as { success: true; data: DeveloperProfile }).data;
   },
 
-  async updateProfile(payload: UpdateProfilePayload): Promise<DeveloperProfile> {
+  async updateProfile(payload: UpdateProfilePayload, cvFile?: File): Promise<DeveloperProfile> {
+    // Use FormData when there's a CV file
+    if (cvFile) {
+      const formData = new FormData();
+      formData.append("cv", cvFile);
+      // Append all other fields
+      if (payload.bio !== undefined) formData.append("bio", payload.bio);
+      if (payload.skills !== undefined) formData.append("skills", JSON.stringify(payload.skills));
+      if (payload.experienceYears !== undefined) formData.append("experienceYears", String(payload.experienceYears));
+      if (payload.githubUrl !== undefined) formData.append("githubUrl", payload.githubUrl);
+      if (payload.linkedinUrl !== undefined) formData.append("linkedinUrl", payload.linkedinUrl);
+      if (payload.portfolioUrl !== undefined) formData.append("portfolioUrl", payload.portfolioUrl);
+      if (payload.location !== undefined) formData.append("location", payload.location);
+      if (payload.availableForRemote !== undefined) formData.append("availableForRemote", String(payload.availableForRemote));
+
+      const response = await apiClient.put<ApiResponse<DeveloperProfile>>("/profile/update", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      return (response.data as { success: true; data: DeveloperProfile }).data;
+    }
+
     const response = await apiClient.put<ApiResponse<DeveloperProfile>>("/profile/update", payload);
     return (response.data as { success: true; data: DeveloperProfile }).data;
   },
@@ -107,10 +127,16 @@ export const dashboardApi = {
 
 // ─── Applications ───
 export const applicationsApi = {
-  async applyToJob(jobId: string, coverLetter?: string): Promise<ApplicationResponse> {
-    const response = await apiClient.post<ApiResponse<ApplicationResponse>>("/applications/apply", {
-      jobId,
-      coverLetter,
+  async applyToJob(jobId: string, coverLetter?: string, cvFile?: File): Promise<ApplicationResponse> {
+    // Always use FormData to support optional CV upload
+    const formData = new FormData();
+    formData.append("jobId", jobId);
+    if (coverLetter) formData.append("coverLetter", coverLetter);
+    if (cvFile) formData.append("cv", cvFile);
+
+    const response = await apiClient.post<ApiResponse<ApplicationResponse>>("/applications/apply", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+      timeout: 30000, // AI matching + upload may take longer
     });
     return (response.data as { success: true; data: ApplicationResponse }).data;
   },

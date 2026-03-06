@@ -18,7 +18,8 @@ export const applicationRepository = {
     jobId: string,
     coverLetter: string,
     matchScore: number | null,
-    matchReason: string | null
+    matchReason: string | null,
+    cvUrl?: string
   ) {
     return prisma.job_applications.create({
       data: {
@@ -27,6 +28,7 @@ export const applicationRepository = {
         cover_letter: coverLetter,
         match_score: matchScore,
         match_reason: matchReason,
+        cv_url: cvUrl ?? null,
       },
       include: {
         job: {
