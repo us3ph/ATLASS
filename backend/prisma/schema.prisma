@@ -1,0 +1,104 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Users ───
+model users {
+  id         String   @id @default(uuid()) @db.Uuid
+  email      String   @unique @db.VarChar(255)
+  password   String   @db.VarChar(255)
+  full_name  String   @db.VarChar(100)
+  role       UserRole @default(developer)
+  created_at DateTime @default(now()) @db.Timestamptz
+  updated_at DateTime @updatedAt @db.Timestamptz
+
+  developer_profile developer_profiles?
+  jobs              jobs[]
+
+  @@index([email])
+}
+
+enum UserRole {
+  developer
+  company
+  admin
+}
+
+// ─── Developer Profiles ───
+model developer_profiles {
+  id                 String   @id @default(uuid()) @db.Uuid
+  user_id            String   @unique @db.Uuid
+  bio                String   @default("") @db.Text
+  skills             String[] @default([])
+  experience_years   Int      @default(0)
+  github_url         String?  @db.VarChar(255)
+  linkedin_url       String?  @db.VarChar(255)
+  portfolio_url      String?  @db.VarChar(255)
+  location           String   @default("") @db.VarChar(100)
+  available_for_remote Boolean @default(true)
+  created_at         DateTime @default(now()) @db.Timestamptz
+  updated_at         DateTime @updatedAt @db.Timestamptz
+
+  user         users          @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  job_matches  job_matches[]
+
+  @@index([user_id])
+  @@index([skills])
+}
+
+// ─── Jobs ───
+model jobs {
+  id              String    @id @default(uuid()) @db.Uuid
+  company_id      String    @db.Uuid
+  title           String    @db.VarChar(200)
+  description     String    @db.Text
+  required_skills String[]  @default([])
+  location        String    @db.VarChar(100)
+  is_remote       Boolean   @default(false)
+  salary_min      Int?
+  salary_max      Int?
+  currency        String    @default("USD") @db.VarChar(3)
+  status          JobStatus @default(open)
+  created_at      DateTime  @default(now()) @db.Timestamptz
+  updated_at      DateTime  @updatedAt @db.Timestamptz
+
+  company     users         @relation(fields: [company_id], references: [id], onDelete: Cascade)
+  job_matches job_matches[]
+
+  @@index([company_id])
+  @@index([status])
+  @@index([required_skills])
+}
+
+enum JobStatus {
+  open
+  closed
+  draft
+}
+
+// ─── Job Matches (AI-generated) ───
+model job_matches {
+  id           String   @id @default(uuid()) @db.Uuid
+  developer_id String   @db.Uuid
+  job_id       String   @db.Uuid
+  score        Int      @default(0)
+  reason       String   @db.Text
+  created_at   DateTime @default(now()) @db.Timestamptz
+  updated_at   DateTime @updatedAt @db.Timestamptz
+
+  developer developer_profiles @relation(fields: [developer_id], references: [id], onDelete: Cascade)
+  job       jobs               @relation(fields: [job_id], references: [id], onDelete: Cascade)
+
+  @@unique([developer_id, job_id])
+  @@index([developer_id])
+  @@index([job_id])
+  @@index([score])
+}
