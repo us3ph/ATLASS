@@ -2,8 +2,6 @@
 # WAZZAL — Docker Compose Configuration
 # ══════════════════════════════════════════
 
-version: "3.8"
-
 # ─── Docker Secrets (file-based) ───
 secrets:
   openrouter_api_key:
