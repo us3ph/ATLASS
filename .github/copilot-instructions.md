@@ -5,7 +5,7 @@ WAZZAL is an AI-powered web platform that connects Moroccan and African software
 with global tech companies, remote jobs, and open-source projects.
 
 ## 🎯 Goal
-Match African developer profiles to global opportunities using AI (OpenAI API).
+Match African developer profiles to global opportunities using AI (OpenRouter / OpenAI-compatible API).
 
 ---
 
@@ -15,6 +15,7 @@ wazzal/
 ├── frontend/        → React.js + TypeScript
 ├── backend/         → Node.js + Express + TypeScript
 ├── database/        → PostgreSQL schemas and migrations
+├── secrets/         → Credentials (git-ignored, never committed)
 └── docker-compose.yml
 ```
 
@@ -24,7 +25,7 @@ wazzal/
 - **Frontend**: React.js, TypeScript, TailwindCSS
 - **Backend**: Node.js, Express.js, TypeScript
 - **Database**: PostgreSQL (use raw SQL or Prisma ORM)
-- **AI**: OpenAI API (gpt-4o model) for job matching
+- **AI**: OpenRouter API (OpenAI-compatible, model configurable via `AI_MODEL` env var)
 - **Auth**: JWT tokens + bcrypt for password hashing
 - **DevOps**: Docker, Docker Compose
 
@@ -68,9 +69,9 @@ wazzal/
 
 ## 🤖 AI Matching Logic
 When writing the AI matching feature:
-- Send developer skills + job requirements to OpenAI API
+- Send developer skills + job requirements to AI via OpenRouter (OpenAI-compatible SDK)
 - Ask it to return a match score (0–100) and a reason
-- Use model: `gpt-4o`
+- Use model from `config.aiModel` (default: `meta-llama/llama-3.1-8b-instruct:free`)
 - Always parse the response as JSON
 - Example prompt structure:
 ```
@@ -81,9 +82,12 @@ Return a JSON: { score: number, reason: string }
 
 ---
 
-## 🔐 Auth Rules
+## 🔐 Auth & Secrets Rules
 - Passwords must be hashed with bcrypt (saltRounds: 12)
-- JWT secret comes from environment variable `JWT_SECRET`
+- JWT secret is read from `secrets/jwt_secret` file (or env var `JWT_SECRET` as fallback)
+- AI API key is read from `secrets/openrouter_api_key` file (or env var `OPENROUTER_API_KEY`)
+- DB password is read from `secrets/db_password` file
+- NEVER hardcode secrets in `.env`, `docker-compose.yml`, or source code
 - JWT expires in 7 days
 - Protected routes use `authenticateToken` middleware
 

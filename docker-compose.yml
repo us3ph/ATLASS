@@ -4,6 +4,15 @@
 
 version: "3.8"
 
+# ─── Docker Secrets (file-based) ───
+secrets:
+  openrouter_api_key:
+    file: ./secrets/openrouter_api_key
+  jwt_secret:
+    file: ./secrets/jwt_secret
+  db_password:
+    file: ./secrets/db_password
+
 services:
   # ─── PostgreSQL Database ───
   database:
@@ -12,8 +21,10 @@ services:
     restart: unless-stopped
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-wazzal_user}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-wazzal_password}
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_password
       POSTGRES_DB: ${POSTGRES_DB:-wazzal_db}
+    secrets:
+      - db_password
     ports:
       - "5432:5432"
     volumes:
@@ -34,11 +45,15 @@ services:
     restart: unless-stopped
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER:-wazzal_user}:${POSTGRES_PASSWORD:-wazzal_password}@database:5432/${POSTGRES_DB:-wazzal_db}
-      JWT_SECRET: ${JWT_SECRET:-dev-jwt-secret-key-change-in-production}
-      OPENAI_API_KEY: ${OPENAI_API_KEY:-sk-your-openai-api-key}
       BACKEND_PORT: 4000
       NODE_ENV: development
       CORS_ORIGIN: http://localhost:5173
+      AI_BASE_URL: ${AI_BASE_URL:-https://openrouter.ai/api/v1}
+      AI_MODEL: ${AI_MODEL:-meta-llama/llama-3.1-8b-instruct:free}
+    secrets:
+      - openrouter_api_key
+      - jwt_secret
+      - db_password
     ports:
       - "4000:4000"
     volumes:

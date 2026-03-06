@@ -13,6 +13,10 @@ build/
 .env.local
 .env.production
 
+# Secrets (NEVER commit credentials)
+secrets/
+!secrets/README.md
+
 # IDE
 .vscode/
 .idea/

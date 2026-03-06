@@ -5,7 +5,12 @@ import { AppError } from "../middleware";
 import { MatchResult, JobMatchResponse } from "../types";
 
 const openai = new OpenAI({
-  apiKey: config.openaiApiKey,
+  apiKey: config.aiApiKey,
+  baseURL: config.aiBaseUrl,
+  defaultHeaders: {
+    "HTTP-Referer": "https://wazzal.dev",
+    "X-Title": "WAZZAL",
+  },
 });
 
 const buildMatchPrompt = (
@@ -86,7 +91,7 @@ export const matchService = {
 
     try {
       const completion = await openai.chat.completions.create({
-        model: "gpt-4o",
+        model: config.aiModel,
         messages: [
           {
             role: "system",

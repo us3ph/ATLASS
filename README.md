@@ -13,7 +13,7 @@
 
 ## 🎯 What is WAZZAL?
 
-WAZZAL uses **OpenAI's GPT-4o** to match developer profiles against job requirements, providing:
+WAZZAL uses **AI-powered matching** (via OpenRouter / OpenAI-compatible API) to match developer profiles against job requirements, providing:
 - A **match score (0–100)** showing how well a developer fits a role
 - A **detailed AI explanation** of why the match is strong or weak
 - A **dashboard** with platform-wide statistics
@@ -36,7 +36,7 @@ ATLASY/
 │
 ├── backend/                 → Node.js + Express + TypeScript
 │   ├── src/
-│   │   ├── config/          → Environment config
+│   │   ├── config/          → Environment + secrets config
 │   │   ├── database/        → Prisma client
 │   │   ├── middleware/       → Auth & error handling
 │   │   ├── repositories/    → Database query layer
@@ -54,6 +54,12 @@ ATLASY/
 │   ├── migrations/          → Raw SQL migrations
 │   └── seeds/               → Seed data
 │
+├── secrets/                 → Credentials (git-ignored)
+│   ├── openrouter_api_key   → AI provider API key
+│   ├── jwt_secret           → JWT signing secret
+│   ├── db_password          → PostgreSQL password
+│   └── README.md            → Setup instructions
+│
 ├── docker-compose.yml       → Full stack orchestration
 ├── .env.example             → Environment template
 └── README.md
@@ -68,7 +74,7 @@ ATLASY/
 | Frontend   | React 18, TypeScript, TailwindCSS, Vite |
 | Backend    | Node.js, Express, TypeScript        |
 | Database   | PostgreSQL 16, Prisma ORM           |
-| AI         | OpenAI API (GPT-4o)                 |
+| AI         | OpenRouter (OpenAI-compatible API)   |
 | Auth       | JWT + bcrypt (saltRounds: 12)       |
 | Validation | Zod                                 |
 | DevOps     | Docker, Docker Compose              |
@@ -80,7 +86,7 @@ ATLASY/
 ### Prerequisites
 - [Docker & Docker Compose](https://docs.docker.com/get-docker/)
 - [Node.js 20+](https://nodejs.org/) (for local development)
-- An [OpenAI API Key](https://platform.openai.com/api-keys)
+- An [OpenRouter API Key](https://openrouter.ai/keys) (free tier available)
 
 ### 1. Clone & Configure
 
@@ -88,9 +94,14 @@ ATLASY/
 git clone https://github.com/your-username/wazzal.git
 cd wazzal
 
-# Copy env template and add your keys
+# Copy env template
 cp .env.example .env
-# Edit .env → add your OPENAI_API_KEY and JWT_SECRET
+
+# Set up secrets (API key, JWT secret, DB password)
+mkdir -p secrets
+echo "your-openrouter-api-key" > secrets/openrouter_api_key
+echo "your-random-jwt-secret" > secrets/jwt_secret
+echo "wazzal_password" > secrets/db_password
 ```
 
 ### 2. Run with Docker (Recommended)
@@ -152,7 +163,7 @@ psql -h localhost -U wazzal_user -d wazzal_db -f database/seeds/seed.sql
 The `/api/jobs/match` endpoint:
 1. Takes the authenticated developer's **profile** (skills, experience, bio)
 2. Takes the **job requirements** (title, required skills, description)
-3. Sends both to **OpenAI GPT-4o** with a structured prompt
+3. Sends both to the **configured AI model** (via OpenRouter) with a structured prompt
 4. Returns a **score (0–100)** and **reason** explaining the match
 5. Saves the result in the database for the dashboard
 
@@ -171,6 +182,8 @@ The `/api/jobs/match` endpoint:
 
 ## 🔐 Security
 
+- **Secrets stored in files** — never hardcoded in env or docker-compose
+- Docker secrets mounted at `/run/secrets/` in containers
 - Passwords hashed with **bcrypt** (saltRounds: 12)
 - JWT tokens expire in **7 days**
 - **Helmet** for HTTP security headers
@@ -178,6 +191,7 @@ The `/api/jobs/match` endpoint:
 - **CORS** configured for frontend origin
 - **Zod validation** on all request inputs
 - Role-based access control on protected routes
+- `.gitignore` excludes `secrets/` and `.env` files
 
 ---
 
