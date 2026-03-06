@@ -1,4 +1,4 @@
-# ── WAZZAL Backend Dockerfile ──
+# ── ATLASS Backend Dockerfile ──
 FROM node:20-alpine AS base
 
 WORKDIR /app

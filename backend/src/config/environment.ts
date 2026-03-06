@@ -57,6 +57,6 @@ export const config: EnvironmentConfig = {
   jwtSecret: readSecret("jwt_secret", "JWT_SECRET"),
   aiApiKey: readSecret("openrouter_api_key", "OPENROUTER_API_KEY"),
   aiBaseUrl: getEnvVariable("AI_BASE_URL", "https://openrouter.ai/api/v1"),
-  aiModel: getEnvVariable("AI_MODEL", "meta-llama/llama-3.1-8b-instruct:free"),
+  aiModel: getEnvVariable("AI_MODEL", "nvidia/nemotron-nano-9b-v2:free"),
   corsOrigin: getEnvVariable("CORS_ORIGIN", "http://localhost:5173"),
 };

@@ -1,5 +1,5 @@
 -- ══════════════════════════════════════
--- WAZZAL Database — Initial Migration
+-- ATLASS Database — Initial Migration
 -- ══════════════════════════════════════
 
 -- Enable UUID extension

@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { LogOut, User, Briefcase, BarChart3, Zap } from "lucide-react";
+import { LogOut, User, Briefcase, BarChart3, Zap, FileText } from "lucide-react";
 
 const Navbar = () => {
   const { user, isAuthenticated, logout } = useAuth();
@@ -18,7 +18,7 @@ const Navbar = () => {
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2">
             <Zap className="w-8 h-8 text-primary-600" />
-            <span className="text-xl font-bold text-gray-900">WAZZAL</span>
+            <span className="text-xl font-bold text-gray-900">ATLASS</span>
           </Link>
 
           {/* Nav Links */}
@@ -41,12 +41,21 @@ const Navbar = () => {
                   Dashboard
                 </Link>
                 <Link
-                  to="/profile"
+                  to={user?.role === "company" ? "/applications/manage" : "/applications"}
                   className="flex items-center gap-1.5 text-gray-600 hover:text-primary-600 font-medium transition-colors"
                 >
-                  <User className="w-4 h-4" />
-                  Profile
+                  <FileText className="w-4 h-4" />
+                  Applications
                 </Link>
+                {user?.role === "developer" && (
+                  <Link
+                    to="/profile"
+                    className="flex items-center gap-1.5 text-gray-600 hover:text-primary-600 font-medium transition-colors"
+                  >
+                    <User className="w-4 h-4" />
+                    Profile
+                  </Link>
+                )}
               </>
             )}
           </div>

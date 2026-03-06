@@ -8,8 +8,8 @@ const openai = new OpenAI({
   apiKey: config.aiApiKey,
   baseURL: config.aiBaseUrl,
   defaultHeaders: {
-    "HTTP-Referer": "https://wazzal.dev",
-    "X-Title": "WAZZAL",
+    "HTTP-Referer": "https://atlass.dev",
+    "X-Title": "ATLASS",
   },
 });
 
@@ -43,7 +43,17 @@ Return ONLY a valid JSON object with no additional text:
 
 const parseMatchResponse = (content: string): MatchResult => {
   try {
-    const cleaned = content.replace(/```json?\n?/g, "").replace(/```/g, "").trim();
+    console.log("[AI Raw Response]", content);
+
+    // Strip markdown code fences
+    let cleaned = content.replace(/```json?\n?/g, "").replace(/```/g, "").trim();
+
+    // Try to extract JSON object if wrapped in extra text
+    const jsonMatch = cleaned.match(/\{[\s\S]*"score"[\s\S]*"reason"[\s\S]*\}/);
+    if (jsonMatch) {
+      cleaned = jsonMatch[0];
+    }
+
     const parsed = JSON.parse(cleaned);
 
     const score = Math.max(0, Math.min(100, Math.round(Number(parsed.score))));
@@ -51,6 +61,7 @@ const parseMatchResponse = (content: string): MatchResult => {
 
     return { score, reason };
   } catch (parseError) {
+    console.error("[AI Parse Error] Could not parse:", content);
     throw new AppError("Failed to parse AI matching response", 502);
   }
 };

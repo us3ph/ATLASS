@@ -56,3 +56,14 @@ export const createJobSchema = z.object({
 export const matchJobSchema = z.object({
   jobId: z.string().uuid("Invalid job ID"),
 });
+
+// ─── Application Validators ───
+export const applyToJobSchema = z.object({
+  jobId: z.string().uuid("Invalid job ID"),
+  coverLetter: z.string().max(3000, "Cover letter must be at most 3000 characters").optional(),
+});
+
+export const updateApplicationStatusSchema = z.object({
+  status: z.enum(["pending", "reviewed", "accepted", "rejected"]),
+  reviewerNotes: z.string().max(2000).optional(),
+});

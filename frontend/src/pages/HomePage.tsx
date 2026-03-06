@@ -22,7 +22,7 @@ const HomePage = () => {
               <span className="text-primary-300">to Global Opportunities</span>
             </h1>
             <p className="text-lg md:text-xl text-primary-200 mb-10 max-w-2xl leading-relaxed">
-              WAZZAL uses AI to match Moroccan and African software engineers
+              ATLASS uses AI to match Moroccan and African software engineers
               with remote jobs, global tech companies, and open-source projects.
               Your next career move starts here.
             </p>
@@ -53,7 +53,7 @@ const HomePage = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              How WAZZAL Works
+              How ATLASS Works
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
               Three simple steps to connect with your next global opportunity
@@ -114,7 +114,7 @@ const HomePage = () => {
           </h2>
           <p className="text-lg text-white/80 mb-8 max-w-2xl mx-auto">
             Join thousands of African engineers who are already connecting with
-            global tech companies through WAZZAL.
+            global tech companies through ATLASS.
           </p>
           <Link
             to="/register"

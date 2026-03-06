@@ -8,8 +8,8 @@ import {
   Users,
   Briefcase,
   Sparkles,
-  TrendingUp,
   ArrowRight,
+  FileText,
 } from "lucide-react";
 import type { DashboardStats, JobMatchResponse } from "../types";
 
@@ -66,10 +66,10 @@ const DashboardPage = () => {
       color: "bg-accent-100 text-accent-600",
     },
     {
-      label: "Avg Match Score",
-      value: `${stats?.averageMatchScore ?? 0}%`,
-      icon: TrendingUp,
-      color: "bg-yellow-100 text-yellow-600",
+      label: "Applications",
+      value: stats?.totalApplications ?? 0,
+      icon: FileText,
+      color: "bg-indigo-100 text-indigo-600",
     },
   ];
 
@@ -81,7 +81,7 @@ const DashboardPage = () => {
           Welcome back, {user?.fullName}
         </h1>
         <p className="text-gray-500 mt-1">
-          Here&apos;s what&apos;s happening on WAZZAL
+          Here&apos;s what&apos;s happening on ATLASS
         </p>
       </div>
 
@@ -107,7 +107,7 @@ const DashboardPage = () => {
       </div>
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
         <Link
           to="/jobs"
           className="card flex items-center justify-between group"
@@ -128,6 +128,30 @@ const DashboardPage = () => {
           </div>
           <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-primary-600 transition-colors" />
         </Link>
+        {user?.role === "developer" && (
+          <Link
+            to="/applications"
+            className="card flex items-center justify-between group"
+          >
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900">My Applications</h3>
+              <p className="text-sm text-gray-500">Track your job applications & status</p>
+            </div>
+            <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-primary-600 transition-colors" />
+          </Link>
+        )}
+        {user?.role === "company" && (
+          <Link
+            to="/applications/manage"
+            className="card flex items-center justify-between group"
+          >
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900">Manage Applications</h3>
+              <p className="text-sm text-gray-500">Review & respond to applicants</p>
+            </div>
+            <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-primary-600 transition-colors" />
+          </Link>
+        )}
       </div>
 
       {/* My Matches (Developer Only) */}

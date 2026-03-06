@@ -12,6 +12,8 @@ import JobsPage from "./pages/JobsPage";
 import JobDetailPage from "./pages/JobDetailPage";
 import ProfilePage from "./pages/ProfilePage";
 import DashboardPage from "./pages/DashboardPage";
+import MyApplicationsPage from "./pages/MyApplicationsPage";
+import RecruiterApplicationsPage from "./pages/RecruiterApplicationsPage";
 
 const AppLayout = ({ children }: { children: React.ReactNode }) => (
   <div className="min-h-screen flex flex-col">
@@ -73,6 +75,26 @@ const App = () => {
               <ProtectedRoute allowedRoles={["developer"]}>
                 <AppLayout>
                   <ProfilePage />
+                </AppLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/applications"
+            element={
+              <ProtectedRoute allowedRoles={["developer"]}>
+                <AppLayout>
+                  <MyApplicationsPage />
+                </AppLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/applications/manage"
+            element={
+              <ProtectedRoute allowedRoles={["company"]}>
+                <AppLayout>
+                  <RecruiterApplicationsPage />
                 </AppLayout>
               </ProtectedRoute>
             }

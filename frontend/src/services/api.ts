@@ -9,6 +9,7 @@ import type {
   Job,
   JobMatchResponse,
   DashboardStats,
+  ApplicationResponse,
 } from "../types";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "/api";
@@ -23,7 +24,7 @@ const apiClient = axios.create({
 
 // ─── Request Interceptor — Attach JWT Token ───
 apiClient.interceptors.request.use((requestConfig) => {
-  const token = localStorage.getItem("wazzal_token");
+  const token = localStorage.getItem("atlass_token");
   if (token) {
     requestConfig.headers.Authorization = `Bearer ${token}`;
   }
@@ -35,8 +36,8 @@ apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      localStorage.removeItem("wazzal_token");
-      localStorage.removeItem("wazzal_user");
+      localStorage.removeItem("atlass_token");
+      localStorage.removeItem("atlass_user");
       window.location.href = "/login";
     }
     return Promise.reject(error);
@@ -101,6 +102,44 @@ export const dashboardApi = {
   async getStats(): Promise<DashboardStats> {
     const response = await apiClient.get<ApiResponse<DashboardStats>>("/dashboard/stats");
     return (response.data as { success: true; data: DashboardStats }).data;
+  },
+};
+
+// ─── Applications ───
+export const applicationsApi = {
+  async applyToJob(jobId: string, coverLetter?: string): Promise<ApplicationResponse> {
+    const response = await apiClient.post<ApiResponse<ApplicationResponse>>("/applications/apply", {
+      jobId,
+      coverLetter,
+    });
+    return (response.data as { success: true; data: ApplicationResponse }).data;
+  },
+
+  async getMyApplications(): Promise<ApplicationResponse[]> {
+    const response = await apiClient.get<ApiResponse<ApplicationResponse[]>>("/applications/me");
+    return (response.data as { success: true; data: ApplicationResponse[] }).data;
+  },
+
+  async getCompanyApplications(): Promise<ApplicationResponse[]> {
+    const response = await apiClient.get<ApiResponse<ApplicationResponse[]>>("/applications/company");
+    return (response.data as { success: true; data: ApplicationResponse[] }).data;
+  },
+
+  async getJobApplications(jobId: string): Promise<ApplicationResponse[]> {
+    const response = await apiClient.get<ApiResponse<ApplicationResponse[]>>(`/applications/job/${jobId}`);
+    return (response.data as { success: true; data: ApplicationResponse[] }).data;
+  },
+
+  async updateStatus(
+    applicationId: string,
+    status: string,
+    reviewerNotes?: string
+  ): Promise<ApplicationResponse> {
+    const response = await apiClient.put<ApiResponse<ApplicationResponse>>(
+      `/applications/${applicationId}/status`,
+      { status, reviewerNotes }
+    );
+    return (response.data as { success: true; data: ApplicationResponse }).data;
   },
 };
 

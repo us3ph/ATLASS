@@ -16,8 +16,8 @@ import type {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const STORAGE_TOKEN_KEY = "wazzal_token";
-const STORAGE_USER_KEY = "wazzal_user";
+const STORAGE_TOKEN_KEY = "atlass_token";
+const STORAGE_USER_KEY = "atlass_user";
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<UserPublic | null>(null);

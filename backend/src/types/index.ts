@@ -1,5 +1,5 @@
 // ──────────────────────────────────────
-// Shared TypeScript types for WAZZAL
+// Shared TypeScript types for ATLASS
 // ──────────────────────────────────────
 
 // ─── API Response Types ───
@@ -127,6 +127,46 @@ export interface DashboardStats {
   totalJobs: number;
   totalMatches: number;
   averageMatchScore: number;
+  totalApplications: number;
+}
+
+// ─── Application Types ───
+export type ApplicationStatus = "pending" | "reviewed" | "accepted" | "rejected";
+
+export interface ApplicationResponse {
+  id: string;
+  developerId: string;
+  jobId: string;
+  coverLetter: string;
+  status: ApplicationStatus;
+  matchScore: number | null;
+  matchReason: string | null;
+  reviewerNotes: string;
+  appliedAt: Date;
+  reviewedAt: Date | null;
+  job: {
+    id: string;
+    title: string;
+    company: { id: string; name: string };
+  };
+  developer: {
+    id: string;
+    bio: string;
+    skills: string[];
+    experienceYears: number;
+    location: string;
+    user: { id: string; fullName: string; email: string };
+  };
+}
+
+export interface ApplyToJobPayload {
+  jobId: string;
+  coverLetter?: string;
+}
+
+export interface UpdateApplicationStatusPayload {
+  status: ApplicationStatus;
+  reviewerNotes?: string;
 }
 
 // ─── Express Augmentation ───

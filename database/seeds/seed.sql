@@ -1,5 +1,5 @@
 -- ══════════════════════════════════════
--- WAZZAL Database — Seed Data
+-- ATLASS Database — Seed Data
 -- ══════════════════════════════════════
 -- Password for all seed users: "password123" (bcrypt hash with saltRounds: 12)
 -- Hash: $2b$12$LJ3m4Ks2dEVBQ1VfZ8VJHOJkZJzHv5HGbZ8K1VvZ5wR7rZ5bKZVJe

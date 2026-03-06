@@ -48,7 +48,8 @@ model developer_profiles {
   updated_at         DateTime @updatedAt @db.Timestamptz
 
   user         users          @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  job_matches  job_matches[]
+  job_matches      job_matches[]
+  job_applications job_applications[]
 
   @@index([user_id])
   @@index([skills])
@@ -70,8 +71,9 @@ model jobs {
   created_at      DateTime  @default(now()) @db.Timestamptz
   updated_at      DateTime  @updatedAt @db.Timestamptz
 
-  company     users         @relation(fields: [company_id], references: [id], onDelete: Cascade)
-  job_matches job_matches[]
+  company          users               @relation(fields: [company_id], references: [id], onDelete: Cascade)
+  job_matches      job_matches[]
+  job_applications job_applications[]
 
   @@index([company_id])
   @@index([status])
@@ -101,4 +103,37 @@ model job_matches {
   @@index([developer_id])
   @@index([job_id])
   @@index([score])
+}
+
+// ─── Application Status ───
+enum ApplicationStatus {
+  pending
+  reviewed
+  accepted
+  rejected
+}
+
+// ─── Job Applications ───
+model job_applications {
+  id             String            @id @default(uuid()) @db.Uuid
+  developer_id   String            @db.Uuid
+  job_id         String            @db.Uuid
+  cover_letter   String            @default("") @db.Text
+  status         ApplicationStatus @default(pending)
+  match_score    Int?
+  match_reason   String?           @db.Text
+  reviewer_notes String            @default("") @db.Text
+  applied_at     DateTime          @default(now()) @db.Timestamptz
+  reviewed_at    DateTime?         @db.Timestamptz
+  created_at     DateTime          @default(now()) @db.Timestamptz
+  updated_at     DateTime          @updatedAt @db.Timestamptz
+
+  developer developer_profiles @relation(fields: [developer_id], references: [id], onDelete: Cascade)
+  job       jobs               @relation(fields: [job_id], references: [id], onDelete: Cascade)
+
+  @@unique([developer_id, job_id])
+  @@index([developer_id])
+  @@index([job_id])
+  @@index([status])
+  @@index([match_score])
 }

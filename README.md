@@ -1,4 +1,4 @@
-# ⚡ WAZZAL
+# ⚡ ATLASS
 
 > AI-powered platform connecting Moroccan and African software engineers with global tech companies, remote jobs, and open-source projects.
 
@@ -11,23 +11,51 @@
 
 ---
 
-## 🎯 What is WAZZAL?
+## 🎯 What is ATLASS?
 
-WAZZAL uses **AI-powered matching** (via OpenRouter / OpenAI-compatible API) to match developer profiles against job requirements, providing:
+ATLASS uses **AI-powered matching** (via OpenRouter / OpenAI-compatible API) to match developer profiles against job requirements, providing:
 - A **match score (0–100)** showing how well a developer fits a role
 - A **detailed AI explanation** of why the match is strong or weak
+- A **one-click application system** with automatic AI scoring
+- A **recruiter dashboard** to review, accept, or reject applicants
+- A **developer applications tracker** to monitor application statuses
 - A **dashboard** with platform-wide statistics
+
+---
+
+## ✨ Key Features
+
+### For Developers
+- **AI Match Check** — See your fit score for any job before applying
+- **One-Click Apply** — Submit applications with optional cover letter; AI scores automatically
+- **Application Tracker** — Monitor all your applications and their statuses (pending → accepted/rejected)
+- **Profile Management** — Skills, experience, bio, GitHub/LinkedIn links
+- **Smart Dashboard** — Personal matches, stats, and quick actions
+
+### For Companies / Recruiters
+- **Job Posting** — Create and manage job listings with required skills
+- **AI-Scored Applicants** — Every application includes an AI match score and explanation
+- **Application Management** — Review, accept, or reject applicants with notes
+- **Filtered Views** — Filter applications by status (pending, reviewed, accepted, rejected)
+- **Per-Job Analytics** — See applicant counts and match distributions per job
 
 ---
 
 ## 🏗️ Project Structure
 
 ```
-ATLASY/
+ATLASS/
 ├── frontend/                → React + TypeScript + TailwindCSS
 │   ├── src/
-│   │   ├── components/      → Reusable UI components
+│   │   ├── components/      → Reusable UI (Navbar, Footer, MatchCard, etc.)
 │   │   ├── pages/           → Route-level pages
+│   │   │   ├── HomePage.tsx
+│   │   │   ├── JobsPage.tsx / JobDetailPage.tsx
+│   │   │   ├── MyApplicationsPage.tsx    ← Developer's application tracker
+│   │   │   ├── RecruiterApplicationsPage.tsx ← Company applicant manager
+│   │   │   ├── DashboardPage.tsx
+│   │   │   ├── ProfilePage.tsx
+│   │   │   └── LoginPage.tsx / RegisterPage.tsx
 │   │   ├── services/        → API client (api.ts)
 │   │   ├── context/         → Auth context provider
 │   │   └── types/           → Shared TypeScript types
@@ -40,8 +68,21 @@ ATLASY/
 │   │   ├── database/        → Prisma client
 │   │   ├── middleware/       → Auth & error handling
 │   │   ├── repositories/    → Database query layer
+│   │   │   ├── applicationRepository.ts  ← Job applications CRUD
+│   │   │   ├── matchRepository.ts
+│   │   │   ├── jobRepository.ts
+│   │   │   ├── profileRepository.ts
+│   │   │   └── userRepository.ts
 │   │   ├── routes/          → Express route handlers
+│   │   │   ├── applicationRoutes.ts      ← Apply, review, accept/reject
+│   │   │   ├── authRoutes.ts
+│   │   │   ├── jobRoutes.ts
+│   │   │   ├── profileRoutes.ts
+│   │   │   └── dashboardRoutes.ts
 │   │   ├── services/        → Business logic layer
+│   │   │   ├── applicationService.ts     ← Apply + auto AI scoring
+│   │   │   ├── matchService.ts           ← OpenRouter AI integration
+│   │   │   └── ...
 │   │   ├── types/           → Shared TypeScript types
 │   │   ├── validators/      → Zod input validation
 │   │   └── server.ts        → Entry point
@@ -51,14 +92,16 @@ ATLASY/
 │   └── package.json
 │
 ├── database/
-│   ├── migrations/          → Raw SQL migrations
+│   ├── migrations/
+│   │   ├── 001_initial_schema.sql
+│   │   └── 002_job_applications.sql      ← Applications table + indexes
 │   └── seeds/               → Seed data
 │
 ├── secrets/                 → Credentials (git-ignored)
-│   ├── openrouter_api_key   → AI provider API key
-│   ├── jwt_secret           → JWT signing secret
-│   ├── db_password          → PostgreSQL password
-│   └── README.md            → Setup instructions
+│   ├── openrouter_api_key
+│   ├── jwt_secret
+│   ├── db_password
+│   └── README.md
 │
 ├── docker-compose.yml       → Full stack orchestration
 ├── .env.example             → Environment template
@@ -91,8 +134,8 @@ ATLASY/
 ### 1. Clone & Configure
 
 ```bash
-git clone https://github.com/your-username/wazzal.git
-cd wazzal
+git clone https://github.com/your-username/atlass.git
+cd atlass
 
 # Copy env template
 cp .env.example .env
@@ -101,7 +144,7 @@ cp .env.example .env
 mkdir -p secrets
 echo "your-openrouter-api-key" > secrets/openrouter_api_key
 echo "your-random-jwt-secret" > secrets/jwt_secret
-echo "wazzal_password" > secrets/db_password
+echo "atlass_password" > secrets/db_password
 ```
 
 ### 2. Run with Docker (Recommended)
@@ -135,24 +178,46 @@ npm run dev
 
 ```bash
 # Connect to PostgreSQL and run seed
-psql -h localhost -U wazzal_user -d wazzal_db -f database/seeds/seed.sql
+psql -h localhost -U atlass_user -d atlass_db -f database/seeds/seed.sql
 ```
 
 ---
 
 ## 🌐 API Endpoints
 
+### Auth
 | Method | Endpoint               | Auth | Description                |
 |--------|------------------------|------|----------------------------|
 | POST   | `/api/auth/register`   | No   | Register new user          |
 | POST   | `/api/auth/login`      | No   | Login & get JWT            |
+
+### Developer Profile
+| Method | Endpoint               | Auth | Description                |
+|--------|------------------------|------|----------------------------|
 | GET    | `/api/profile/:id`     | Yes  | Get developer profile      |
 | PUT    | `/api/profile/update`  | Yes  | Update developer profile   |
+
+### Jobs
+| Method | Endpoint               | Auth | Description                |
+|--------|------------------------|------|----------------------------|
 | GET    | `/api/jobs`            | No   | List all open jobs         |
 | GET    | `/api/jobs/:id`        | No   | Get job details            |
 | POST   | `/api/jobs`            | Yes  | Create job (company only)  |
 | POST   | `/api/jobs/match`      | Yes  | AI match developer to job  |
 | GET    | `/api/jobs/matches/me` | Yes  | Get developer's AI matches |
+
+### Applications (NEW)
+| Method | Endpoint                         | Auth       | Description                          |
+|--------|----------------------------------|------------|--------------------------------------|
+| POST   | `/api/applications/apply`        | Developer  | Apply to a job (auto AI scoring)     |
+| GET    | `/api/applications/me`           | Developer  | List my applications & statuses      |
+| GET    | `/api/applications/company`      | Company    | List all applications to my jobs     |
+| GET    | `/api/applications/job/:jobId`   | Company    | List applications for a specific job |
+| PUT    | `/api/applications/:id/status`   | Company    | Accept / reject an application       |
+
+### Dashboard & Health
+| Method | Endpoint               | Auth | Description                |
+|--------|------------------------|------|----------------------------|
 | GET    | `/api/dashboard/stats` | Yes  | Platform statistics        |
 | GET    | `/api/health`          | No   | Health check               |
 
@@ -166,6 +231,30 @@ The `/api/jobs/match` endpoint:
 3. Sends both to the **configured AI model** (via OpenRouter) with a structured prompt
 4. Returns a **score (0–100)** and **reason** explaining the match
 5. Saves the result in the database for the dashboard
+
+---
+
+## 📋 Job Application System
+
+### Developer Workflow
+On any job detail page, developers have **two options**:
+- **Check Match** — Preview their AI match score without applying
+- **Apply Now** — Submit an application with optional cover letter; AI scoring runs automatically
+
+### Recruiter Workflow
+Companies can review all applications from a **dedicated management page**:
+- Applications grouped by job with developer details, skills, and cover letters
+- **AI match scores and reasons** displayed for each applicant
+- **Accept / Reject** buttons with optional reviewer notes
+- Filter by status: All, Pending, Reviewed, Accepted, Rejected
+
+### Application Statuses
+| Status     | Description                              |
+|------------|------------------------------------------|
+| `pending`  | Submitted, awaiting recruiter review     |
+| `reviewed` | Recruiter has seen the application       |
+| `accepted` | Applicant accepted for the position      |
+| `rejected` | Application declined                     |
 
 ---
 

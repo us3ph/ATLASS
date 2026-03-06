@@ -1,7 +1,7 @@
-# GitHub Copilot Instructions — WAZZAL
+# GitHub Copilot Instructions — ATLASS
 
 ## 🌍 Project Overview
-WAZZAL is an AI-powered web platform that connects Moroccan and African software engineers
+ATLASS is an AI-powered web platform that connects Moroccan and African software engineers
 with global tech companies, remote jobs, and open-source projects.
 
 ## 🎯 Goal
@@ -11,7 +11,7 @@ Match African developer profiles to global opportunities using AI (OpenRouter / 
 
 ## 🗂️ Project Structure
 ```
-wazzal/
+atlass/
 ├── frontend/        → React.js + TypeScript
 ├── backend/         → Node.js + Express + TypeScript
 ├── database/        → PostgreSQL schemas and migrations
@@ -71,7 +71,7 @@ wazzal/
 When writing the AI matching feature:
 - Send developer skills + job requirements to AI via OpenRouter (OpenAI-compatible SDK)
 - Ask it to return a match score (0–100) and a reason
-- Use model from `config.aiModel` (default: `meta-llama/llama-3.1-8b-instruct:free`)
+- Use model from `config.aiModel` (default: `nvidia/nemotron-nano-9b-v2:free`)
 - Always parse the response as JSON
 - Example prompt structure:
 ```

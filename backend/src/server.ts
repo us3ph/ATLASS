@@ -65,7 +65,7 @@ const startServer = async (): Promise<void> => {
     app.listen(config.port, () => {
       console.log(`
   ╔═══════════════════════════════════════════╗
-  ║         🚀 WAZZAL API Server              ║
+  ║         🚀 ATLASS API Server              ║
   ║─────────────────────────────────────────── ║
   ║  Port:        ${config.port}                       ║
   ║  Environment: ${config.nodeEnv.padEnd(25)}║

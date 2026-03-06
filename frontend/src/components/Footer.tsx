@@ -9,7 +9,7 @@ const Footer = () => {
           <div>
             <div className="flex items-center gap-2 mb-4">
               <Zap className="w-6 h-6 text-primary-400" />
-              <span className="text-lg font-bold text-white">WAZZAL</span>
+              <span className="text-lg font-bold text-white">ATLASS</span>
             </div>
             <p className="text-sm leading-relaxed">
               Connecting Moroccan and African software engineers with global
@@ -31,14 +31,14 @@ const Footer = () => {
           <div>
             <h3 className="text-white font-semibold mb-4">About</h3>
             <p className="text-sm leading-relaxed">
-              WAZZAL uses AI-powered matching to connect African talent with
+              ATLASS uses AI-powered matching to connect African talent with
               the best global opportunities. Built with passion from Morocco.
             </p>
           </div>
         </div>
 
         <div className="border-t border-gray-800 mt-8 pt-8 text-center text-sm">
-          <p>&copy; {new Date().getFullYear()} WAZZAL. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} ATLASS. All rights reserved.</p>
         </div>
       </div>
     </footer>

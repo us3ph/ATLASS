@@ -1,5 +1,5 @@
 # ══════════════════════════════════════
-# WAZZAL — Secrets Folder
+# ATLASS — Secrets Folder
 # ══════════════════════════════════════
 #
 # This folder contains Docker secrets.

@@ -1,7 +1,7 @@
 {
-  "name": "wazzal-backend",
+  "name": "atlass-backend",
   "version": "1.0.0",
-  "description": "WAZZAL — AI-powered platform connecting African engineers with global opportunities",
+  "description": "ATLASS — AI-powered platform connecting African engineers with global opportunities",
   "main": "dist/server.js",
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",

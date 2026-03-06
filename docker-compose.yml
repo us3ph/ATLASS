@@ -1,5 +1,5 @@
 # ══════════════════════════════════════════
-# WAZZAL — Docker Compose Configuration
+# ATLASS — Docker Compose Configuration
 # ══════════════════════════════════════════
 
 # ─── Docker Secrets (file-based) ───
@@ -15,12 +15,12 @@ services:
   # ─── PostgreSQL Database ───
   database:
     image: postgres:16-alpine
-    container_name: wazzal-database
+    container_name: atlass-database
     restart: unless-stopped
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-wazzal_user}
+      POSTGRES_USER: ${POSTGRES_USER:-atlass_user}
       POSTGRES_PASSWORD_FILE: /run/secrets/db_password
-      POSTGRES_DB: ${POSTGRES_DB:-wazzal_db}
+      POSTGRES_DB: ${POSTGRES_DB:-atlass_db}
     secrets:
       - db_password
     ports:
@@ -29,7 +29,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
       - ./database/migrations:/docker-entrypoint-initdb.d
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-wazzal_user} -d ${POSTGRES_DB:-wazzal_db}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-atlass_user} -d ${POSTGRES_DB:-atlass_db}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -39,15 +39,15 @@ services:
     build:
       context: ./backend
       target: development
-    container_name: wazzal-backend
+    container_name: atlass-backend
     restart: unless-stopped
     environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER:-wazzal_user}:${POSTGRES_PASSWORD:-wazzal_password}@database:5432/${POSTGRES_DB:-wazzal_db}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-atlass_user}:${POSTGRES_PASSWORD:-atlass_password}@database:5432/${POSTGRES_DB:-atlass_db}
       BACKEND_PORT: 4000
       NODE_ENV: development
       CORS_ORIGIN: http://localhost:5173
       AI_BASE_URL: ${AI_BASE_URL:-https://openrouter.ai/api/v1}
-      AI_MODEL: ${AI_MODEL:-meta-llama/llama-3.1-8b-instruct:free}
+      AI_MODEL: ${AI_MODEL:-nvidia/nemotron-nano-9b-v2:free}
     secrets:
       - openrouter_api_key
       - jwt_secret
@@ -68,7 +68,7 @@ services:
     build:
       context: ./frontend
       target: development
-    container_name: wazzal-frontend
+    container_name: atlass-frontend
     restart: unless-stopped
     environment:
       VITE_API_URL: http://localhost:4000/api
